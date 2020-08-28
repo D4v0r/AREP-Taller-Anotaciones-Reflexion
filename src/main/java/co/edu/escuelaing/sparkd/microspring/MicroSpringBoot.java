@@ -15,11 +15,19 @@ public class MicroSpringBoot {
         try {
             MicroSpring microSpring= new MicroSpring();
             microSpring.start(args);
-            HttpServer server = new HttpServer(microSpring);
+            int port = getPort();
+            HttpServer server = new HttpServer(microSpring, port);
             server.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    static int getPort() {
+        if (System.getenv("PORT") != null) {
+            return Integer.parseInt(System.getenv("PORT"));
+        }
+        return 4567;
     }
 
 

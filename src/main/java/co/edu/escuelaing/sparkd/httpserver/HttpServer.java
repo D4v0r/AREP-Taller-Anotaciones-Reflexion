@@ -21,8 +21,9 @@ public class HttpServer {
     public HttpServer() {
     }
 
-    public HttpServer(MicroSpring ioCServer){
+    public HttpServer(MicroSpring ioCServer, int port){
         this.iocServer = ioCServer;
+        this.port = port;
     }
 
     public HttpServer(int port) {
