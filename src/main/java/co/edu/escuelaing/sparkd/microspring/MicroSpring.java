@@ -41,12 +41,8 @@ public class MicroSpring {
     public String invoke(String path) {
         try {
             return beans.get(path).invoke(null).toString();
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(MicroSpring.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(MicroSpring.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(MicroSpring.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MicroSpringBoot.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "Error ";
     }

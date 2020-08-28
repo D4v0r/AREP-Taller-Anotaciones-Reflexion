@@ -12,38 +12,27 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
 public class HttpServer {
-
-
 
     private int port = 36000;
     private boolean running = false;
     private MicroSpring iocServer;
 
-
-
     public HttpServer() {
     }
 
-    public HttpServer(MicroSpring iocServer) {
-        this.iocServer = iocServer;
+    public HttpServer(MicroSpring ioCServer){
+        this.iocServer = ioCServer;
     }
-
-
 
     public HttpServer(int port) {
         this.port = port;
     }
 
 
-
     public void start() {
         try {
             ServerSocket serverSocket = null;
-
-
 
             try {
                 serverSocket = new ServerSocket(port);
@@ -51,8 +40,6 @@ public class HttpServer {
                 System.err.println("Could not listen on port: " + port);
                 System.exit(1);
             }
-
-
 
             running = true;
             while (running) {
@@ -66,11 +53,7 @@ public class HttpServer {
                         System.exit(1);
                     }
 
-
-
                     processRequest(clientSocket);
-
-
 
                     clientSocket.close();
                 } catch (IOException ex) {
@@ -82,8 +65,6 @@ public class HttpServer {
             Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-
 
     private void processRequest(Socket clientSocket) throws IOException {
         BufferedReader in = new BufferedReader(
@@ -107,38 +88,36 @@ public class HttpServer {
         }
         Request req = new Request(request.get("requestLine"));
 
-
-
         System.out.println("RequestLine: " + req);
-
-
 
         createResponse(req, new PrintWriter(
                 clientSocket.getOutputStream(), true));
         in.close();
     }
 
-
-
     private String[] createEntry(String rawEntry) {
         return rawEntry.split(":");
     }
-
-
 
     private void createResponse(Request req, PrintWriter out) {
         String outputLine = testResponse();
         URI theuri = req.getTheuri();
         if (theuri.getPath().startsWith("/Apps")) {
             String appuri = theuri.getPath().substring(5);
-            invokeApp(appuri, out);
+            invokeApp(appuri,out);
         } else {
             getStaticResource(theuri.getPath(), out);
         }
         out.close();
     }
 
-
+    private void invokeApp(String appuri, PrintWriter out) {
+        String header = "HTTP/1.1 200 OK\r\n"
+                + "Content-Type: text/html\r\n" +
+                "\r\n";
+        String methodresponse = iocServer.invoke(appuri);
+        out.println(header + methodresponse);
+    }
 
     private String testResponse() {
         String outputLine = "HTTP/1.1 200 OK\r\n"
@@ -157,8 +136,6 @@ public class HttpServer {
         return outputLine;
     }
 
-
-
     private void getStaticResource(String path, PrintWriter out) {
         Path file = Paths.get("target/classes/public_html" + path);
         try (InputStream in = Files.newInputStream(file);
@@ -176,15 +153,5 @@ public class HttpServer {
         } catch (IOException ex) {
             Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-
-
-    private void invokeApp(String appuri, PrintWriter out) {
-        String header = "HTTP/1.1 200 OK\r\n"
-                + "Content-Type: text/html\r\n"
-                + "\r\n";
-        String methodresponse = iocServer.invoke(appuri);
-        out.println(header + methodresponse);
     }
 }
