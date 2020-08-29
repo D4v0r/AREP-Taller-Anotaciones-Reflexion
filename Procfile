@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* edu.escuelaing.sparkd.microspring.MicroSpringBoot
+web: java $JAVA_OPTS -cp target/classes:target/dependency/* co.edu.escuelaing.sparkd.microspring.MicroSpringBoot
